@@ -1,0 +1,60 @@
+{% extends "main.html" %}
+{% load static %}
+{% block bodyblock %}
+    <link rel="stylesheet" href="{% static 'css/upload.css' %}">
+    <style>
+        /* CSS for image preview */
+        .previewer{
+            display:none;
+        }
+        #image-preview {
+            max-width: 300px;
+            max-height: 300px;
+        }
+    </style>
+
+    <div class="mt-5 container d-flex justify-content-center">
+        <form method="post" class="form-group" x-data="{ fileName: '' }" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-group shadow">
+                <span class="input-group-text px-3 text-muted"><i class="fas fa-image fa-lg"></i></span>
+                <input type="file"
+                       name="image"
+                       accept="image/*"
+                       required
+                       id="id_image"
+                       x-ref="file"
+                       @change="fileName = $refs.file.files[0].name"
+                       onchange="previewImage(event)"
+                       class="d-none">
+                <input disabled
+                       type="text"
+                       class="form-control form-control-lg"
+                       placeholder="Upload Image"
+                       x-model="fileName">
+                <button class="browse btn btn-primary px-4"
+                        type="button"
+                        x-on:click.prevent="$refs.file.click()">
+                    <i class="fas fa-image"></i> Browse
+                </button>
+            </div>
+            <div class="previewer container d-flex justify-content-center mt-3"> 
+                <img id="image-preview" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/1280px-Placeholder_view_vector.svg.png" alt="">
+            </div>
+            <button type="submit" class="w-50 mt-5 btn btn-primary">Upload</button>
+        </form>     
+    </div>
+
+    <script>
+        // JavaScript function to display image preview
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var preview = document.getElementById('image-preview');
+                preview.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+
+{% endblock bodyblock %}
